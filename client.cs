@@ -12,22 +12,26 @@ namespace socket
 			byte[] bytes = new byte[1024];
 			try {
 			
-				IPHostEntry ipHostInfo = Dns.GetHostEntry("127.0.0.1");
+				IPHostEntry ipHostInfo = Dns.GetHostEntry("127.1.0.0");
 				IPAddress ipAddress = ipHostInfo.AddressList[0];
-				IPEndPoint remoteEP = new IPEndPoint("127.0.0.1", 12345);
+				IPEndPoint remoteEP = new IPEndPoint(ipAddress,12345);
 				Socket sender = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp );
 				try {
 					sender.Connect(remoteEP);  
 					Console.WriteLine($"Socket connected to {sender.RemoteEndPoint.ToString()}");
 					byte[] msg = Encoding.Unicode.GetBytes("Test message");
 					sender.Send(msg);
-					Console.WriteLine($"Sent: {Encoding.Unicode.GetString(msg)}");
+					Console.WriteLine($"Sent = ");
+					string message = "Lubie Placki\n";
 					sender.Receive(bytes);
-					Console.WriteLine($"Received: {Encoding.Unicode.GetString(bytes)}");
+					Console.WriteLine(message);
 					sender.Shutdown(SocketShutdown.Both);  
 					sender.Close();
 				} catch (Exception e) {
 					Console.WriteLine($"Unexpected exception : {e.ToString()}");
+					Console.WriteLine(remoteEP);
+					
+
 				}
 			} catch (Exception e) {
 				Console.WriteLine( e.ToString());
