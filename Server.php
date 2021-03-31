@@ -8,7 +8,7 @@
 	#===================================================================
 	
 	# zmienne predefiniowane -------------------------------------------
-	$host = "127.0.0.1";
+	$host = "127.1.0.0";
 	$port = 12345;
 	
 	# tworzymy gniazdo -------------------------------------------------
@@ -41,6 +41,7 @@
 		# wyswietlamy informacje o polaczeniu  - - - - - - - - - - - - -
 		socket_getpeername( $client, $addr, $port );
 		print "Addres: $addr Port: $port\n";
+		print socket_read($port);
 		
 		# przekazujemy informacje o biezacym czasie  - - - - - - - - - -
 		$msg = "Current time: " . time();
