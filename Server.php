@@ -41,7 +41,8 @@
 		# wyswietlamy informacje o polaczeniu  - - - - - - - - - - - - -
 		socket_getpeername( $client, $addr, $port );
 		print "Addres: $addr Port: $port\n";
-		print socket_read($port);
+		print(socket_read($client,255));
+		
 		
 		# przekazujemy informacje o biezacym czasie  - - - - - - - - - -
 		$msg = "Current time: " . time();

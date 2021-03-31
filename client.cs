@@ -19,10 +19,12 @@ namespace socket
 				try {
 					sender.Connect(remoteEP);  
 					Console.WriteLine($"Socket connected to {sender.RemoteEndPoint.ToString()}");
-					byte[] msg = Encoding.Unicode.GetBytes("Test message");
-					sender.Send(msg);
+					
+					
 					Console.WriteLine($"Sent = ");
-					string message = "Lubie Placki\n";
+					string message = Console.ReadLine();
+					byte[] msg = Encoding.Unicode.GetBytes(message);
+					sender.Send(msg);
 					sender.Receive(bytes);
 					Console.WriteLine(message);
 					sender.Shutdown(SocketShutdown.Both);  
