@@ -11,9 +11,10 @@ namespace socket
         {
 			byte[] bytes = new byte[1024];
 			try {
-				IPHostEntry ipHostInfo = Dns.GetHostEntry(args.Length > 0 ? args[0] : "localhost");
+			
+				IPHostEntry ipHostInfo = Dns.GetHostEntry("127.0.0.1");
 				IPAddress ipAddress = ipHostInfo.AddressList[0];
-				IPEndPoint remoteEP = new IPEndPoint(ipAddress, 11000);
+				IPEndPoint remoteEP = new IPEndPoint("127.0.0.1", 12345);
 				Socket sender = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp );
 				try {
 					sender.Connect(remoteEP);  
