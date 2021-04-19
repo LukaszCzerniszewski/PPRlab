@@ -37,17 +37,51 @@
 	
 	# obslugujemy kolejnych klientow, jak tylko sie podlacza -----------
 	while( $client = socket_accept( $server ) ){
+		$pid = pcntl_fork();
+		if ($pid == -1) {
+			die('could not fork');
+	   } else if ($pid) {
+			# wyswietlamy informacje o polaczeniu  - - - - - - - - - - - - -
+			socket_getpeername( $client, $addr, $port );
+			print "Addres: $addr Port: $port\n";
+			pcntl_wait($status); //Protect against Zombie children
+	   } else {
+			
+			$dane= socket_read($client,255);
+			#$file = substr($dane,0,8);
+			#$file = $file . ".txt";
+			#print($file);
+			
+			#print(bin2hex());
+			$file=  "";
+			$doZapisu="";
+			for($i=0; $i<8; $i=$i+2)
+			{
+			$file = $file . strval($dane[$i]);	
+			}
+			$file = (string)$file;
+			$file .= ".txt";
+			for($i=9; $i<strlen($dane); $i++)
+			{
+				$doZapisu .= $dane[$i];
+			}
+			print("Plik do zapisania = " . $doZapisu);
+
+			$fp=fopen($file,"a");
+			flock($fp,2);
+			fwrite($fp,bin2hex($doZapisu));
+			flock($fp,3);
+			fclose($fp);
+	   }
 		
-		# wyswietlamy informacje o polaczeniu  - - - - - - - - - - - - -
-		socket_getpeername( $client, $addr, $port );
-		print "Addres: $addr Port: $port\n";
-		print(socket_read($client,255));
+		
 		
 		
 		# przekazujemy informacje o biezacym czasie  - - - - - - - - - -
 		$msg = "Current time: " . time();
 		socket_write( $client, $msg, strlen( $msg ) );
 		socket_close( $client );
+		
 	}
 	#-------------------------------------------------------------------
 	socket_close( $server );

@@ -2,6 +2,8 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Diagnostics;
+using System.ComponentModel;
 
 namespace socket
 {
@@ -17,12 +19,16 @@ namespace socket
 				IPEndPoint remoteEP = new IPEndPoint(ipAddress,12345);
 				Socket sender = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp );
 				try {
+					
 					sender.Connect(remoteEP);  
+
 					Console.WriteLine($"Socket connected to {sender.RemoteEndPoint.ToString()}");
-					
-					
 					Console.WriteLine($"Sent = ");
+					
 					string message = Console.ReadLine();
+					int ID = Process.GetCurrentProcess().Id;
+					message = ID.ToString() + message;
+
 					byte[] msg = Encoding.Unicode.GetBytes(message);
 					sender.Send(msg);
 					sender.Receive(bytes);
