@@ -11,43 +11,52 @@
 	  exit( 1 );
 	}
 	echo $server;
-
+	$dane=null;
 	# obslugujemy kolejnych klientow, jak tylko sie podlacza -----------
-	//while( 
-		//$client = stream_socket_accept( $server );  -------- 
-		// {
-		# wyswietlamy informacje o klientach - - - - - - - - - - - - - -
-		// $str = stream_socket_get_name( $client, 1 );
-		// list( $addr, $port ) = explode( ':', $str );
-	
-		// print "Addres: $addr Port: $port\n";	
-		print ("\n");
-		$dane = stream_socket_recvfrom($server, 1500, STREAM_PEEK);
-		print $dane;
+	do
+		{
+		$pid = pcntl_fork();
+		if ($pid == -1) {
+			die('could not fork');
+		} else if ($pid) {	
+			print ("\n");
+			$dane = stream_socket_recvfrom($server, 1500, STREAM_PEEK);
 			
-			$file=  "";
-			$doZapisu="";
-			for($i=0; $i<8; $i=$i+2)
-			{
-			$file = $file . strval($dane[$i]);	
-			}
-			$file = (string)$file;
-			$file .= ".txt";
-			for($i=9; $i<strlen($dane); $i++)
-			{
-				$doZapisu .= $dane[$i];
-			}
-			print("Plik do zapisania = " . $doZapisu);
+		} else 
+		{
+			
+			
 
-			$fp=fopen($file,"a");
-			flock($fp,2);
-			fwrite($fp,bin2hex($doZapisu));
-			flock($fp,3);
-			fclose($fp);
+				$file=  "";
+				$doZapisu="";
+				for($i=0; $i<8; $i=$i+2)
+				{
+					$file = $file . strval($dane[$i]);	
+				}
+				$file = (string)$file;
+				$file .= ".txt";
+				for($i=8; $i<strlen($dane); $i++)
+				{
+					$doZapisu .= $dane[$i];
+				}
+				print ("Nazwa pliku =" . $file);
+				print("Plik do zapisania = " . $doZapisu);
+	
+				$fp=fopen($file,"a");
+				flock($fp,2);
+				fwrite($fp,bin2hex($doZapisu));
+				flock($fp,3);
+				fclose($fp);
+			
+			
+			
+		}
+		
+	}while( $client = stream_socket_recvfrom( $server,1,0,$str  ));
 
-		# przekazujemy informacje o obecnym czasie - - - - - - - - - - -
-		//fwrite( $client, "Current time: " . time() . "\n");
-		//fclose( $client );
+	# przekazujemy informacje o obecnym czasie - - - - - - - - - - -
+	fwrite( $client, "Current time: " . time() . "\n");
+	fclose( $client );
 	//}
 	#-------------------------------------------------------------------
 	fclose( $server );
